@@ -9,4 +9,4 @@ my_agent = Agent(my_policy)
 
 
 my_agent.play(display=True, animation=True)
-# my_agent.expected_return_compute(10000, True)
+my_agent.expected_return_compute(10000, True)
