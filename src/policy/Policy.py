@@ -1,5 +1,5 @@
 import random as rdm
-from src.domain.HillDomain import HillDomain
+from src.hillproblem.HillDomain import HillDomain
 
 
 class Policy:

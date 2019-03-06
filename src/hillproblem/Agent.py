@@ -1,4 +1,4 @@
-from src.domain.HillDomain import HillDomain
+from src.hillproblem.HillDomain import HillDomain
 from src.policy.Policy import Policy
 from src.animator.Animator import Animator
 import time
@@ -11,7 +11,7 @@ class Agent:
         self.policy = policy
         self.gamma = gamma
 
-    def play(self, nb_actions=None, display=False):
+    def play(self, nb_actions=None, display=False, animation=False):
         initial_state = (-0.5, 0.)
         history_state = [initial_state]
         # Contient unique la liste des états visités, utilisée pour le display de la solution
@@ -33,20 +33,22 @@ class Agent:
             print('Recap :')
             print("  - Nb Actions : {}".format(len(history_one_step_system_transition)))
             print("  - Resultat : {}".format(history_one_step_system_transition[-1][2]))
+        if animation:
             t1 = time.time()
             anim = Animator()
-            print("          ... Loading Animation ...")
+            print("          ... Creating Animation ...")
             anim(history_state, dt=0.001)
             t2 = time.time()
-            print("  - Replay available (rendering duration : {:.3f})".format(t2-t1), '\n')
-        return history_one_step_system_transition, history_state
+            print("               Replay available\n"
+                  "          (rendering duration : {:.2f})".format(t2-t1), '\n')
+        return history_one_step_system_transition
 
     def expected_return_compute(self, n=100, display=False):
         # Calcule une approximation de l'expected reward par une succession d'experience
         # erreur en n^(-1/2)
         cumulated_return = 0
         for _ in range(n):
-            hosst, balek = self.play()
+            hosst = self.play()
             cumulated_return += hosst[-1][2]
         if display:
             print("Expected Return : {:.3f}".format(cumulated_return / n), '\n')

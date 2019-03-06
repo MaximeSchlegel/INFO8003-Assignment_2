@@ -3,7 +3,7 @@ import numpy as np
 import math as m
 import matplotlib.pyplot as plt
 from PIL import Image
-from src.domain.HillDomain import HillDomain
+from src.hillproblem.HillDomain import HillDomain
 
 
 class Animator:
@@ -118,12 +118,15 @@ class Animator:
         plt_txt = plt.text(10, 440, 't = 0', color='black')
         images.append([plt_img, plt_txt])
         # on initialise notre animation avec l'image à t=0
-        s_step = 10
-        with imageio.get_writer('animation.gif', mode='I', fps=30) as writer:
+        # on prend des états avec un pas de 20 (5 états par actions)
+        # on passe 50 images par seconde => vitesse "réelle"
+        s_step = 20
+        aps = 10
+        with imageio.get_writer('animation.gif', mode='I', fps=((100//s_step)*aps)) as writer:
             for i in range(1, (len(history) // s_step)):
                 image = np.copy(self.background)
                 self.draw_car(image, history[s_step * i][0])
                 self.draw_speed(image, history[s_step * i][1])
                 writer.append_data(image)
-            for i in range(30):
+            for i in range((100//s_step)*aps):
                 writer.append_data(image)
