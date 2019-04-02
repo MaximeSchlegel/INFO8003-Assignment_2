@@ -40,7 +40,7 @@ class Animator:
         except:
             pics = Image.open("src/animator/pine_tree.png")
             tree = np.delete(np.array(pics), 3, 2)
-            tree_mask = np.where(tree != 0, 1, 0)
+            tree_mask = np.where(tree != 0, 1, 0).astype('uint8')
             self.background = np.zeros((self.height, self.width, 3))
             for w in range(self.width):
                 for h in range(self.height):
@@ -51,13 +51,14 @@ class Animator:
                         # ciel
                         self.background[h][w] = [24, 113, 206]
 
+            self.background = self.background.astype('uint8')
             w_pos = self.xtow(-0.5)
             h_pos = self.ytoh(self.domain.hill(-0.5))
-            self.background[h_pos - 42: h_pos, w_pos - 23: w_pos + 24] += tree_mask * (tree - self.background[h_pos - 42: h_pos, w_pos - 23: w_pos + 24])
+            self.background[h_pos - 42: h_pos, w_pos - 23: w_pos + 24] += tree_mask.astype('uint8') * (tree - self.background[h_pos - 42: h_pos, w_pos - 23: w_pos + 24])
             w_pos = self.xtow(0.5)
             h_pos = self.ytoh(self.domain.hill(0.5))
-            self.background[h_pos - 42: h_pos, w_pos - 23: w_pos + 24] += tree_mask * (tree - self.background[h_pos - 42: h_pos, w_pos - 23: w_pos + 24])
-            img = Image.fromarray(self.background.astype('uint8'), mode='RGB')
+            self.background[h_pos - 42: h_pos, w_pos - 23: w_pos + 24] += tree_mask.astype('uint8') * (tree - self.background[h_pos - 42: h_pos, w_pos - 23: w_pos + 24])
+            img = Image.fromarray(self.background, mode='RGB')
             img.save('src/animator/background.jpeg')
         return self.background
 
@@ -122,7 +123,7 @@ class Animator:
         # on passe 50 images par seconde => vitesse "réelle"
         s_step = 20
         aps = 10
-        with imageio.get_writer('animation.gif', mode='I', fps=((100//s_step)*aps)) as writer:
+        with imageio.get_writer('images/animation.gif', mode='I', fps=((100//s_step)*aps)) as writer:
             for i in range(1, (len(history) // s_step)):
                 image = np.copy(self.background)
                 self.draw_car(image, history[s_step * i][0])
